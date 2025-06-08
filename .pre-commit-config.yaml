@@ -1,0 +1,74 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: ['--maxkb=1000']
+      - id: check-case-conflict
+      - id: check-executables-have-shebangs
+      - id: check-symlinks
+      - id: destroyed-symlinks
+      - id: mixed-line-ending
+        args: ['--fix=lf']
+      
+  - repo: local
+    hooks:
+      - id: typescript-check
+        name: TypeScript Type Check
+        entry: npm run typecheck
+        language: system
+        files: '\.(ts|tsx)$'
+        pass_filenames: false
+        
+      - id: eslint
+        name: ESLint
+        entry: npm run lint
+        language: system
+        files: '\.(ts|tsx|js|jsx)$'
+        pass_filenames: false
+        
+      - id: prettier
+        name: Prettier
+        entry: npx prettier --write
+        language: system
+        files: '\.(ts|tsx|js|jsx|json|md|yml|yaml)$'
+        
+      - id: jest
+        name: Jest Tests
+        entry: npm test
+        language: system
+        files: '\.(ts|tsx)$'
+        pass_filenames: false
+        stages: [commit]
+        
+      - id: build-check
+        name: Build Check
+        entry: npm run build
+        language: system
+        files: '\.(ts|tsx)$'
+        pass_filenames: false
+        stages: [push]
+        
+      - id: security-audit
+        name: Security Audit
+        entry: npm audit --audit-level=moderate
+        language: system
+        pass_filenames: false
+        stages: [push]
+        
+      - id: no-debug-statements
+        name: No Debug Statements
+        entry: 'grep -r "console\.(log|debug|info|warn)" src/ && exit 1 || exit 0'
+        language: system
+        files: '\.(ts|tsx)$'
+        
+      - id: no-todo-fixme
+        name: No TODO/FIXME
+        entry: 'grep -r "TODO\|FIXME\|XXX\|HACK" src/ && exit 1 || exit 0'
+        language: system
+        files: '\.(ts|tsx)$'
